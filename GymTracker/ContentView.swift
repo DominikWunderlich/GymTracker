@@ -8,9 +8,12 @@
 import SwiftUI
 
 // Data-Models
-struct Exercise: Identifiable {
+struct Exercise: Identifiable, Codable {
 	let id = UUID()
 	var name: String
+	var sets: Int
+	var weight: Double
+	var reps: Int
 }
 
 struct Workout: Identifiable {
