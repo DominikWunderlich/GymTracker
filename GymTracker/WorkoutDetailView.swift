@@ -23,7 +23,7 @@ struct WorkoutDetailView: View {
 							.font(.headline)
 						Spacer()
 						Text("\(exercise.sets) Sets")
-						Text("× \(exercise.reps) Wdh")
+						Text("× \(exercise.reps) Reps")
 						Text("× \(exercise.weight, specifier: "%.1f") kg")
 	
 					}
@@ -51,7 +51,7 @@ struct WorkoutDetailView: View {
 					.frame(maxWidth: 60)
 					
 				
-				Button("Hinzufügen") {
+				Button("Add") {
 					if let weight = Double(newExerciseWeight),
 					   let reps = Int(newExerciseReps),
 					   let sets = Int(newExerciseSets),
