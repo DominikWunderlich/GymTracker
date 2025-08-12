@@ -30,52 +30,88 @@ struct Workout: Identifiable {
 	var exercises: [Exercise] = []
 }
 
+struct TrainingLogEntry: Identifiable, Codable {
+    let id: UUID
+    let date: Date
+    let workoutName: String
+    let performedExercises: [Exercise]
+    
+    init(id: UUID = UUID(), date: Date = Date(), workoutName: String, performedExercises: [Exercise]) {
+        self.id = id
+        self.date = date
+        self.workoutName = workoutName
+        self.performedExercises = performedExercises
+    }
+}
+
 struct ContentView: View {
 	@State private var workouts: [Workout] = []
 	@State private var showingAddWorkout = false
 	@State private var newWorkoutName = ""
+    @State private var trainingLogs: [TrainingLogEntry] = []
 	
-	var body: some View {
-		NavigationView {
-			List {
-				ForEach(workouts) { workout in
-					NavigationLink(destination: WorkoutDetailView(workout: binding(for: workout))) {
-						Text(workout.name)
-					}
-				}
-			}
-			.navigationTitle("Workouts")
-			.navigationBarItems(trailing:
-				Button(action: {
-					showingAddWorkout = true
-				}) {
-					Image(systemName: "plus")
-				}
-			)
-			.sheet(isPresented: $showingAddWorkout) {
-				VStack {
-					Text("Add New Workout")
-						.font(.headline)
-					TextField("Workout Name", text: $newWorkoutName)
-						.textFieldStyle(RoundedBorderTextFieldStyle())
-						.padding()
-					Button("Add") {
-						if !newWorkoutName.trimmingCharacters(in: .whitespaces).isEmpty {
-							workouts.append(Workout(name: newWorkoutName))
-							newWorkoutName = ""
-							showingAddWorkout = false
-						}
-					}
-					.padding()
-					Button("Cancel") {
-						newWorkoutName = ""
-						showingAddWorkout = false
-					}
-				}
-				.padding()
-			}
-		}
-	}
+    var body: some View {
+        NavigationView {
+            List {
+                Section(header: Text("MY Workouts")) {
+                    ForEach(workouts) { workout in
+                        NavigationLink(destination: WorkoutDetailView(
+                            workout: binding(for: workout),
+                            onLogCompleted: { logEntry in
+                                trainingLogs.append(logEntry)
+                            })) {
+                            Text(workout.name)
+                        }
+                    }
+                }
+
+                if !trainingLogs.isEmpty {
+                    Section(header: Text("Training History")) {
+                        ForEach(trainingLogs) { log in
+                            VStack(alignment: .leading) {
+                                Text(log.workoutName)
+                                    .font(.headline)
+                                Text(log.date, style: .date)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Workouts")
+            .navigationBarItems(
+                trailing: Button {
+                    showingAddWorkout = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+            )
+            .sheet(isPresented: $showingAddWorkout) {
+                VStack {
+                    Text("Add New Workout")
+                        .font(.headline)
+                    TextField("Workout Name", text: $newWorkoutName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                    Button("Add") {
+                        if !newWorkoutName.trimmingCharacters(in: .whitespaces).isEmpty {
+                            workouts.append(Workout(name: newWorkoutName))
+                            newWorkoutName = ""
+                            showingAddWorkout = false
+                        }
+                    }
+                    .padding()
+                    Button("Cancel") {
+                        newWorkoutName = ""
+                        showingAddWorkout = false
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+
 	
 	// Hilfsfunktion um Binding auf ein Workout zu bekommen
 	private func binding(for workout: Workout) -> Binding<Workout> {

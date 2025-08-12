@@ -9,6 +9,7 @@ import SwiftUI
 
 struct WorkoutDetailView: View {
 	@Binding var workout: Workout
+    var onLogCompleted: (TrainingLogEntry) -> Void
 	@State private var newExerciseName = ""
 	@State private var newExerciseSets = ""
 	@State private var newExerciseReps = ""
@@ -69,8 +70,17 @@ struct WorkoutDetailView: View {
 					}
 
 				}
+                .padding()
 			}
-			.padding()
+            Button("End workout") {
+                let log = TrainingLogEntry(
+                    workoutName: workout.name,
+                    performedExercises: workout.exercises
+                )
+                onLogCompleted(log)
+            }
+            .padding()
+            .buttonStyle(.borderedProminent)
 		}
 		.navigationTitle(workout.name)
 	}
