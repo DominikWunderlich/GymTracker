@@ -17,6 +17,19 @@ struct WorkoutDetailView: View {
 	
 	var body: some View {
 		VStack {
+            // Start Training Button
+            NavigationLink(destination: WorkoutSessionView(workout: workout) {
+                logEntry in onLogCompleted(logEntry)
+            }) {
+                Text("Start Training")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+            }
 			List {
 				ForEach(workout.exercises) { exercise in
 					HStack {
@@ -72,15 +85,6 @@ struct WorkoutDetailView: View {
 				}
                 .padding()
 			}
-            Button("End workout") {
-                let log = TrainingLogEntry(
-                    workoutName: workout.name,
-                    performedExercises: workout.exercises
-                )
-                onLogCompleted(log)
-            }
-            .padding()
-            .buttonStyle(.borderedProminent)
 		}
 		.navigationTitle(workout.name)
 	}
