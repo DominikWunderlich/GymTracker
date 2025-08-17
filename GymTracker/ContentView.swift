@@ -68,12 +68,14 @@ struct ContentView: View {
                 if !trainingLogs.isEmpty {
                     Section(header: Text("Training History")) {
                         ForEach(trainingLogs) { log in
-                            VStack(alignment: .leading) {
-                                Text(log.workoutName)
-                                    .font(.headline)
-                                Text(log.date, style: .date)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                            NavigationLink(destination: TrainingLogDetailView(logEntry: log)) {
+                                VStack(alignment: .leading) {
+                                    Text(log.workoutName)
+                                        .font(.headline)
+                                    Text(log.date, style: .date)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }
